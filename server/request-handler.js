@@ -59,11 +59,21 @@ exports.requestHandler = function(request, response) {
 
   } else if(request.method === "POST") {
     
+    var message = '';
     var statusCode = 201;
     var headers = defaultCorsHeaders;
     headers['Content-Type'] = "application/json";
     response.writeHead(statusCode, headers);
-    response.end(JSON.stringify(messageData));
+    request.on('data',function(data){
+      message += data;
+      messageData.results.push(JSON.parse(message));
+      // console.log(messageData.results);
+    });
+    request.on('end', function(){
+      
+      response.end(message);
+    });
+    // response.end(JSON.stringify(messageData));
 
   } else {
     
